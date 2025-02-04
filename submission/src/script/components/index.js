@@ -1,10 +1,11 @@
 import './app-bar.js';
 import './footer-bar.js';
 
-import './club-list.js';
-import './club-item.js';
+import './note-list.js';
+import './note-item.js';
 
 import './search-bar.js';
+import './input-bar.js';
 import './section-with-title.js';
 
 import './query-waiting.js';

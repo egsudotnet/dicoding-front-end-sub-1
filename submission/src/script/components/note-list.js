@@ -1,6 +1,6 @@
 import Utils from '../utils.js';
 
-class ClubList extends HTMLElement {
+class NoteList extends HTMLElement {
   _shadowRoot = null;
   _style = null;
 
@@ -87,4 +87,4 @@ class ClubList extends HTMLElement {
   }
 }
 
-customElements.define('club-list', ClubList);
+customElements.define('note-list', NoteList);

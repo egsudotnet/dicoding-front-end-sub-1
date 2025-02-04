@@ -1,9 +1,9 @@
-class SearchBar extends HTMLElement {
+class InputBar extends HTMLElement {
   _shadowRoot = null;
   _style = null;
 
   _submitEvent = 'submit';
-  _searchEvent = 'search';
+  _inputEvent = 'input';
 
   constructor() {
     super();
@@ -22,29 +22,29 @@ class SearchBar extends HTMLElement {
     this._shadowRoot
       .querySelector('form')
       .addEventListener('submit', (event) => this._onFormSubmit(event, this));
-    this.addEventListener(this._submitEvent, this._onSearchBarSubmit);
+    this.addEventListener(this._submitEvent, this._onInputBarSubmit);
   }
 
   disconnectedCallback() {
     this._shadowRoot
       .querySelector('form')
       .removeEventListener('submit', (event) => this._onFormSubmit(event, this));
-    this.removeEventListener(this._submitEvent, this._onSearchBarSubmit);
+    this.removeEventListener(this._submitEvent, this._onInputBarSubmit);
   }
 
-  _onFormSubmit(event, searchBarInstance) {
-    searchBarInstance.dispatchEvent(new CustomEvent('submit'));
+  _onFormSubmit(event, inputBarInstance) {
+    inputBarInstance.dispatchEvent(new CustomEvent('submit'));
 
     event.preventDefault();
   }
 
-  _onSearchBarSubmit() {
+  _onInputBarSubmit() {
     const query = this._shadowRoot.querySelector('input#name').value;
 
     if (!query) return;
 
     this.dispatchEvent(
-      new CustomEvent(this._searchEvent, {
+      new CustomEvent(this._inputEvent, {
         detail: { query },
         bubbles: true,
       }),
@@ -68,18 +68,19 @@ class SearchBar extends HTMLElement {
         box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
       }
 
-      .search-form {
-        display: flex;
+      .input-form {
+        display: flex(1);
         gap: 16px;
       }
 
-      .search-form .form-group {
+      .input-form .form-group {
         flex-grow: 1;
 
         position: relative;
+        margin-top: 10px
       }
 
-      .search-form .form-group input {
+      .input-form .form-group input {
         display: block;
 
         width: 100%;
@@ -93,11 +94,26 @@ class SearchBar extends HTMLElement {
         font-size: 1rem;
       }
 
-      .search-form .form-group input:focus-visible {
+      .input-form .form-group textarea {
+        display: block;
+
+        width: 100%;
+        height: 60px;
+
+        padding: 14px 10px 0 10px;
+        border-inline: none;
+        border-block-start: none;
+        border-block-end: 1px solid cornflowerblue;
+
+        font-size: 1rem;
+      }
+
+
+      .input-form .form-group input:focus-visible {
         outline: 0;
       }
 
-      .search-form .form-group label {
+      .input-form .form-group label {
         line-height: 60px;
         font-size: 1em;
         font-weight: 700;
@@ -116,15 +132,15 @@ class SearchBar extends HTMLElement {
         transition: 150ms all ease-in-out;
       }
 
-      .search-form .form-group input:focus-visible ~ label,
-      .search-form .form-group input:valid ~ label {
+      .input-form .form-group input:focus-visible ~ label,
+      .input-form .form-group input:valid ~ label {
         left: 10px;
         top: -16px;
 
         font-size: 0.8em;
       }
 
-      .search-form button {
+      .input-form button {
         border: 0;
         padding-inline: 24px;
         background-color: cornflowerblue;
@@ -138,11 +154,11 @@ class SearchBar extends HTMLElement {
         transition: 100ms linear;
       }
 
-      .search-form button:hover {
+      .input-form button:hover {
         background-color: #4485ff;
       }
 
-      .search-form button:active {
+      .input-form button:active {
         background-color: #6c9aee;
       }
     `;
@@ -154,18 +170,22 @@ class SearchBar extends HTMLElement {
 
     this._shadowRoot.appendChild(this._style);
     this._shadowRoot.innerHTML += `
-      <div class="floating-form">
-        <form id="searchForm" class="search-form">
+      <div class="">
+        <form id="inputForm" class="input-form">
           <div class="form-group">
-            <input id="name" name="name" type="search" required />
+            <input id="name" name="name" type="input" required />
             <label for="name">note's name</label>
           </div>
 
-          <button>Search</button>
+          <div class="form-group">
+            <textarea id="name" name="name" type="input" required></textarea>
+            <label for="name">Deskription</label>
+          </div>
+          <button>Save</button>
         </form>
       </div>
     `;
   }
 }
 
-customElements.define('search-bar', SearchBar);
+customElements.define('input-bar', InputBar);

@@ -3,13 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Club Finder App</title>
+    <title>Note Finder App</title>
 
     <!-- Own Styles -->
-    <link rel="icon" href="/src/public/favicon.png" sizes="512x512" />
+    <link rel="icon" href="./src/public/favicon.png" sizes="512x512" />
 
     <!-- Favicons -->
-    <link rel="stylesheet" href="/src/styles/style.css" />
+    <link rel="stylesheet" href="./src/styles/style.css" />
   </head>
   <body>
     <header>
@@ -17,17 +17,31 @@
     </header>
 
     <main>
+      
       <div class="container">
-        <section-with-title id="club" class="club" title="Sport Club List">
+        
+        <section-with-title id="note" class="note" title="Note List">
+         
+
+          <div id="inputBarContainer" class="input-bar-container">
+            <input-bar></input-bar>
+          </div>
+ 
+          </div>
+        </section-with-title>
+      </div>
+      
+      <div class="container">
+        <section-with-title id="note" class="note" title="Note List">
           <div id="searchBarContainer" class="search-bar-container">
             <search-bar></search-bar>
           </div>
 
-          <div id="clubListContainer" class="club-list-container">
+          <div id="noteListContainer" class="note-list-container">
             <query-waiting></query-waiting>
             <search-loading></search-loading>
 
-            <club-list></club-list>
+            <note-list></note-list>
           </div>
         </section-with-title>
       </div>
@@ -37,6 +51,6 @@
       <footer-bar></footer-bar>
     </footer>
 
-    <script type="module" src="/src/app.js"></script>
+    <script type="module" src="./src/app.js"></script>
   </body>
 </html>

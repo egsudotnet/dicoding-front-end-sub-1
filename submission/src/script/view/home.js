@@ -1,61 +1,61 @@
 import Utils from '../utils.js';
-import Clubs from '../data/local/clubs.js';
+import Notes from '../data/local/notes.js';
 
 const home = () => {
   const searchFormElement = document.querySelector('search-bar');
 
-  const clubListContainerElement = document.querySelector('#clubListContainer');
-  const clubQueryWaitingElement = document.querySelector('query-waiting');
-  const clubLoadingElement = document.querySelector('search-loading');
-  const clubListElement = clubListContainerElement.querySelector('club-list');
+  const noteListContainerElement = document.querySelector('#noteListContainer');
+  const noteQueryWaitingElement = document.querySelector('query-waiting');
+  const noteLoadingElement = document.querySelector('search-loading');
+  const noteListElement = noteListContainerElement.querySelector('note-list');
 
-  const showSportClub = (query) => {
+  const showNote = (query) => {
     showLoading();
 
-    const result = Clubs.searchClub(query);
+    const result = Notes.searchNote(query);
     displayResult(result);
 
-    showClubList();
+    showNoteList();
   };
 
   const onSearchHandler = (event) => {
     event.preventDefault();
 
     const { query } = event.detail;
-    showSportClub(query);
+    showNote(query);
   };
 
-  const displayResult = (clubs) => {
-    const clubItemElements = clubs.map((club) => {
-      const clubItemElement = document.createElement('club-item');
-      clubItemElement.club = club;
+  const displayResult = (notes) => {
+    const noteItemElements = notes.map((note) => {
+      const noteItemElement = document.createElement('note-item');
+      noteItemElement.note = note;
 
-      return clubItemElement;
+      return noteItemElement;
     });
 
-    Utils.emptyElement(clubListElement);
-    clubListElement.append(...clubItemElements);
+    Utils.emptyElement(noteListElement);
+    noteListElement.append(...noteItemElements);
   };
 
-  const showClubList = () => {
-    Array.from(clubListContainerElement.children).forEach((element) => {
+  const showNoteList = () => {
+    Array.from(noteListContainerElement.children).forEach((element) => {
       Utils.hideElement(element);
     });
-    Utils.showElement(clubListElement);
+    Utils.showElement(noteListElement);
   };
 
   const showLoading = () => {
-    Array.from(clubListContainerElement.children).forEach((element) => {
+    Array.from(noteListContainerElement.children).forEach((element) => {
       Utils.hideElement(element);
     });
-    Utils.showElement(clubLoadingElement);
+    Utils.showElement(noteLoadingElement);
   };
 
   const showQueryWaiting = () => {
-    Array.from(clubListContainerElement.children).forEach((element) => {
+    Array.from(noteListContainerElement.children).forEach((element) => {
       Utils.hideElement(element);
     });
-    Utils.showElement(clubQueryWaitingElement);
+    Utils.showElement(noteQueryWaitingElement);
   };
 
   searchFormElement.addEventListener('search', onSearchHandler);

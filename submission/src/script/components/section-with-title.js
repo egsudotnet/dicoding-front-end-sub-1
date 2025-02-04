@@ -49,7 +49,7 @@ class SectionWithTitle extends HTMLElement {
 
     this._shadowRoot.appendChild(this._style);
     this._shadowRoot.innerHTML += `
-      <section id="club" class="club">
+      <section id="note" class="note">
         <div class="title-section">
           <h2>${this.title}</h2>
         </div>

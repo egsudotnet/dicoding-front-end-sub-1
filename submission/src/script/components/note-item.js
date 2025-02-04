@@ -1,11 +1,11 @@
-class ClubItem extends HTMLElement {
+class NoteItem extends HTMLElement {
   _shadowRoot = null;
   _style = null;
-  _club = {
+  _note = {
     idTeam: null,
     strTeam: null,
-    strDescriptionEN: null,
-    strTeamBadge: null,
+    body: null,
+    createdAt: null,
   };
 
   constructor() {
@@ -19,15 +19,15 @@ class ClubItem extends HTMLElement {
     this._shadowRoot.innerHTML = '';
   }
 
-  set club(value) {
-    this._club = value;
+  set note(value) {
+    this._note = value;
 
     // Render ulang
     this.render();
   }
 
-  get club() {
-    return this._club;
+  get note() {
+    return this._note;
   }
 
   _updateStyle() {
@@ -40,23 +40,21 @@ class ClubItem extends HTMLElement {
         overflow: hidden;
       }
 
-      .fan-art-club {
-        width: 100%;
-        max-height: 450px;
-        
-        object-fit: cover;
-        object-position: center;
+      .fan-art-note {
+        text-align: right;
+        margin-top:5px;
+        margin-right:15px;
       }
 
-      .club-info {
+      .note-info {
         padding: 16px 24px;
       }
 
-      .club-info__title h2 {
+      .note-info__title h2 {
         font-weight: lighter;
       }
 
-      .club-info__description p {
+      .note-info__description p {
         display: -webkit-box;
         margin-top: 10px;
         
@@ -76,17 +74,17 @@ class ClubItem extends HTMLElement {
     this._shadowRoot.appendChild(this._style);
     this._shadowRoot.innerHTML += `
       <div class="card">
-        <img 
-          class="fan-art-club"
-          src="${this._club.strTeamBadge}" 
-          alt="Fan Art: ${this._club.strTeam}"
+        <div
+          class="fan-art-note"
         >
-        <div class="club-info">
-          <div class="club-info__title">
-            <h2>${this._club.strTeam}</h2>
+        ${this._note.createdAt}
+        </div>
+        <div class="note-info">
+          <div class="note-info__title">
+            <h2>${this._note.title}</h2>
           </div>
-          <div class="club-info__description">
-            <p>${this._club.strDescriptionEN}</p>
+          <div class="note-info__description">
+            <p>${this._note.body}</p>
           </div>
         </div>
       </div>
@@ -94,4 +92,4 @@ class ClubItem extends HTMLElement {
   }
 }
 
-customElements.define('club-item', ClubItem);
+customElements.define('note-item', NoteItem);

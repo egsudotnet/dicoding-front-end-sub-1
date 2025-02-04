@@ -154,18 +154,18 @@ main {
 }
 /* Search bar */
 
-.club-list-container {
+.note-list-container {
   margin-block-start: 32px;
 }
 
-.club-list .list {
+.note-list .list {
   display: grid;
   grid-template-columns: 1fr 1fr;
 
   gap: 16px;
 }
 
-.club-list .list .card .fan-art-club {
+.note-list .list .card .fan-art-note {
   width: 100%;
   max-height: 450px;
 
@@ -173,15 +173,15 @@ main {
   object-position: center;
 }
 
-.club-list .list .card .club-info {
+.note-list .list .card .note-info {
   padding: 16px 24px;
 }
 
-.club-list .list .card .club-info__title h2 {
+.note-list .list .card .note-info__title h2 {
   font-weight: lighter;
 }
 
-.club-list .list .card .club-info__description p {
+.note-list .list .card .note-info__description p {
   display: -webkit-box;
   margin-top: 10px;
 
@@ -192,7 +192,7 @@ main {
   -webkit-line-clamp: 5; /* number of lines to show */
 }
 
-.club-list-container .placeholder {
+.note-list-container .placeholder {
   margin-block: 1rem;
 
   font-size: 1.5rem;
