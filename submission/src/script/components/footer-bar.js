@@ -38,7 +38,7 @@ class FooterBar extends HTMLElement {
     this._shadowRoot.appendChild(this._style);
     this._shadowRoot.innerHTML += `      
       <div>
-        Note Finder &copy; 2023
+        Note Finder &copy; 2025
       </div>
     `;
   }

@@ -1,54 +1,40 @@
 class SearchBar extends HTMLElement {
   _shadowRoot = null;
   _style = null;
-
-  _submitEvent = 'submit';
   _searchEvent = 'search';
+  _inputHandler = null;
 
   constructor() {
     super();
-
     this._shadowRoot = this.attachShadow({ mode: 'open' });
     this._style = document.createElement('style');
-
     this.render();
   }
 
-  _emptyContent() {
-    this._shadowRoot.innerHTML = '';
-  }
-
   connectedCallback() {
-    this._shadowRoot
-      .querySelector('form')
-      .addEventListener('submit', (event) => this._onFormSubmit(event, this));
-    this.addEventListener(this._submitEvent, this._onSearchBarSubmit);
+    const input = this._shadowRoot.querySelector('input#name');
+
+    // Simpan referensi event handler agar bisa dihapus nanti
+    this._inputHandler = this._onSearchBarSubmit.bind(this);
+    input.addEventListener('input', this._inputHandler);
+
+    // Pencarian langsung saat halaman dimuat
+    this._onSearchBarSubmit();
   }
 
   disconnectedCallback() {
-    this._shadowRoot
-      .querySelector('form')
-      .removeEventListener('submit', (event) => this._onFormSubmit(event, this));
-    this.removeEventListener(this._submitEvent, this._onSearchBarSubmit);
-  }
-
-  _onFormSubmit(event, searchBarInstance) {
-    searchBarInstance.dispatchEvent(new CustomEvent('submit'));
-
-    event.preventDefault();
+    const input = this._shadowRoot.querySelector('input#name');
+    if (this._inputHandler) {
+      input.removeEventListener('input', this._inputHandler);
+    }
   }
 
   _onSearchBarSubmit() {
-    const query = this._shadowRoot.querySelector('input#name').value;
-
-    if (!query) return;
-
-    this.dispatchEvent(
-      new CustomEvent(this._searchEvent, {
-        detail: { query },
-        bubbles: true,
-      }),
-    );
+    const query = this._shadowRoot.querySelector('input#name').value.trim();
+    this.dispatchEvent(new CustomEvent(this._searchEvent, {
+      detail: { query },
+      bubbles: true,
+    }));
   }
 
   _updateStyle() {
@@ -56,112 +42,74 @@ class SearchBar extends HTMLElement {
       :host {
         display: inline;
       }
-    
-      .floating-form {
-        background-color: white;
-        padding: 16px;
-        border-radius: 5px;
 
+      .floating-form {
+        /*background: linear-gradient(145deg, #6a82fb, #fc5c7d);*/
+        background: linear-gradient(145deg, #3674B5, #7CA5D2FF);
+        padding: 10px;
+        border-radius: 5px;
         position: sticky;
         top: 10px;
-
-        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       }
 
       .search-form {
         display: flex;
-        gap: 16px;
+        gap: 12px;
+        align-items: center;
       }
 
       .search-form .form-group {
         flex-grow: 1;
-
         position: relative;
       }
 
       .search-form .form-group input {
         display: block;
-
         width: 100%;
-        height: 60px;
-
-        padding: 14px 10px 0 10px;
+        height: 50px;
+        padding: 5px;
         border-inline: none;
         border-block-start: none;
-        border-block-end: 1px solid cornflowerblue;
-
+        border-block-end: none;
         font-size: 1rem;
+        border-radius: 4px;
+        outline: none;
       }
 
       .search-form .form-group input:focus-visible {
-        outline: 0;
+        outline: none;
       }
-
-      .search-form .form-group label {
-        line-height: 60px;
-        font-size: 1em;
-        font-weight: 700;
-        text-transform: uppercase;
-        color: cornflowerblue;
-
-        white-space: nowrap;
-
-        position: absolute;
-        top: 0;
-        left: 20px;
-
-        user-select: none;
-        pointer-events: none;
-
-        transition: 150ms all ease-in-out;
-      }
-
-      .search-form .form-group input:focus-visible ~ label,
-      .search-form .form-group input:valid ~ label {
-        left: 10px;
-        top: -16px;
-
-        font-size: 0.8em;
-      }
+ 
 
       .search-form button {
-        border: 0;
-        padding-inline: 24px;
-        background-color: cornflowerblue;
-
-        text-transform: uppercase;
-        font-size: 1rem;
-        color: white;
-
+        padding: 12px 20px;
+        background-color: white;
+        color: cornflowerblue;
+        border: none;
+        border-radius: 4px;
         cursor: pointer;
-
-        transition: 100ms linear;
+        font-size: 1rem;
+        transition: background-color 0.3s ease, transform 0.3s ease;
       }
 
       .search-form button:hover {
-        background-color: #4485ff;
-      }
-
-      .search-form button:active {
-        background-color: #6c9aee;
+        background-color: #dcdcdc;
+        transform: scale(1.05);
       }
     `;
   }
 
   render() {
-    this._emptyContent();
+    this._shadowRoot.innerHTML = '';
     this._updateStyle();
-
     this._shadowRoot.appendChild(this._style);
     this._shadowRoot.innerHTML += `
       <div class="floating-form">
         <form id="searchForm" class="search-form">
           <div class="form-group">
-            <input id="name" name="name" type="search" required />
-            <label for="name">note's name</label>
+            <input id="name" name="name" type="search" required placeholder="Search ..."/>
           </div>
-
-          <button>Search</button>
         </form>
       </div>
     `;

@@ -5,15 +5,15 @@
   box-sizing: border-box;
 }
 
-body {
+body { 
+  background: linear-gradient(145deg, #92bdec, #bcd8f6);
   font-family: sans-serif;
 }
 
 /* GLOBAL */
 .container {
-  max-width: 800px;
-
-  padding-block: 32px;
+  max-width: 1600px;
+  /* padding-block: 32px; */
   padding-inline: 16px;
   margin-inline: auto;
 }
@@ -30,8 +30,7 @@ label {
 }
 
 section > .title-section {
-  margin-block-end: 2rem;
-
+  /* margin-block-end: 2rem; */
   font-size: 1.2em;
 }
 /* GLOBAL */
@@ -203,9 +202,11 @@ main {
 
 /* Start of Footer */
 footer {
-  background-color: cornflowerblue;
-
+  /* background-color: cornflowerblue; */
+  
+  background:  #3674B5;
   color: beige;
+  margin-top: 100px
 }
 
 footer .container {

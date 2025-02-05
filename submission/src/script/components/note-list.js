@@ -25,12 +25,36 @@ class NoteList extends HTMLElement {
       :host {
         display: block;
       }
-      
+
       .list {
         display: grid;
         grid-template-columns: ${'1fr '.repeat(this.column)};
-      
         gap: ${this.gutter}px;
+      }
+
+      /* Media Queries for Responsiveness */
+      @media (max-width: 768px) {
+        .list {
+          grid-template-columns: 1fr; /* 1 column for smaller devices */
+        }
+      }
+
+      @media (min-width: 769px) and (max-width: 1024px) {
+        .list {
+          grid-template-columns: 1fr 1fr; /* 2 columns for tablets */
+        }
+      }
+
+      @media (min-width: 1025px) and (max-width: 1440px) {
+        .list {
+          grid-template-columns: 1fr 1fr 1fr; /* 3 columns for laptops */
+        }
+      }
+
+      @media (min-width: 1441px) {
+        .list {
+          grid-template-columns: 1fr 1fr 1fr 1fr; /* 4 columns for PCs */
+        }
       }
     `;
   }
