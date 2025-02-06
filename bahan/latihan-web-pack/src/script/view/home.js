@@ -1,6 +1,5 @@
 import Utils from '../utils.js';
-// import Notes from '../data/local/notes.js';
-import Notes from '../data/remote/notes-api.js';
+import Notes from '../data/local/notes.js';
 
 const home = () => {
   const searchFormElement = document.querySelector('search-bar');
@@ -15,21 +14,9 @@ const home = () => {
    */
   const showAllNotes = () => {
     showLoading();
-    // // // const result = Notes.getAll();
-    // // // displayResult(result);
-    // // // showNoteList();
-
-    
-    Notes.getNotes()
-      .then((result) => {
-        displayResult(result);
-        showNoteList();
-      })
-      .catch((error) => {
-        clubSearchErrorElement.textContent = error.message;
-        showSearchError();
-      });
-
+    const result = Notes.getAll();
+    displayResult(result);
+    showNoteList();
   };
 
   /**
@@ -92,8 +79,8 @@ const home = () => {
     }
 
     Notes.createNote({
-      "title": titleInput.value,
-      "body": bodyInput.value,
+      title: titleInput.value,
+      body: bodyInput.value,
     });
 
     titleInput.value = '';

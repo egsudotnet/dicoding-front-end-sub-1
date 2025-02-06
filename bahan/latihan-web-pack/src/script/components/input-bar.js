@@ -72,10 +72,10 @@ class InputBar extends HTMLElement {
 
     if (this.validateTitle() && this.validateBody()) {
       const newNote = {
-        // // // id: Date.now(),
+        id: Date.now(),
         title: this.titleInput.value.trim(),
         body: this.bodyInput.value.trim(),
-        // // // createdAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
       };
 
       this.dispatchEvent(new CustomEvent('add-note', {
@@ -85,7 +85,26 @@ class InputBar extends HTMLElement {
       }));
 
       this.form.reset();
+      this.showSuccessMessage();
     }
+  }
+
+  showSuccessMessage() {
+    const successMessage = document.createElement('div');
+    successMessage.textContent = 'Note successfully added!';
+    successMessage.className = 'success-message';
+    this.shadowRoot.appendChild(successMessage);
+
+    setTimeout(() => {
+      successMessage.classList.add('show');
+    }, 10);
+
+    setTimeout(() => {
+      successMessage.classList.remove('show');
+      setTimeout(() => {
+        this.shadowRoot.removeChild(successMessage);
+      }, 300);
+    }, 3000);
   }
 
   get form() {
