@@ -1,0 +1,37 @@
+Untuk memasang webpack, silakan buka proyek Anda. Pada terminal, kita tuliskan perintah berikut:
+
+npm init --yes
+npm install webpack --save-dev
+npm install webpack-cli --save-dev
+
+atau
+npm install webpack webpack-cli --save-dev
+
+-- npm install copy-webpack-plugin --save-dev
+-- npm install webpack webpack-cli webpack-dev-server webpack-merge css-loader style-loader html-webpack-plugin --save-dev
+
+Lalu, untuk menjalankan script build, kita gunakan perintah berikut.
+
+npm run build
+
+
+#webpack.config.js pada root folder proyek.
+
+Untuk menggunakan kedua loader tersebut, langkah pertama adalah memasangnya melalui npm dengan perintah berikut. 
+
+npm install style-loader css-loader --save-dev
+
+#npm install style-loader css-loader --save-dev --legacy-peer-deps
+
+
+-- npm install @babel/core babel-loader @babel/preset-env --save-dev
+
+Menggunakan Plugin
+npm install html-webpack-plugin --save-dev
+
+# DevServer
+npm install webpack-dev-server --save-dev
+npm run start-dev
+
+# Menggunakan webpack-merge
+npm install webpack-merge --save-dev

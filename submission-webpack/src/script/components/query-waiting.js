@@ -1,4 +1,4 @@
-class FooterBar extends HTMLElement {
+class QueryWaiting extends HTMLElement {
   _shadowRoot = null;
   _style = null;
 
@@ -12,13 +12,11 @@ class FooterBar extends HTMLElement {
   _updateStyle() {
     this._style.textContent = `
       :host {
-        display: block;
-      }
+        margin-block: 1rem;
 
-      div {
-        padding: 24px 20px;
-
-        text-align: center;
+        font-size: 1.5rem;
+        font-weight: lighter;
+        color: rgba(0, 0, 0, 0.5);
       }
     `;
   }
@@ -37,11 +35,9 @@ class FooterBar extends HTMLElement {
 
     this._shadowRoot.appendChild(this._style);
     this._shadowRoot.innerHTML += `      
-      <div>
-        EgSu Notes &copy; 2025
-      </div>
+      Waiting for search keyword
     `;
   }
 }
 
-customElements.define('footer-bar', FooterBar);
+customElements.define('query-waiting', QueryWaiting);
