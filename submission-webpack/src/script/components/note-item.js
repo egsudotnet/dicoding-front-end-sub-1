@@ -10,12 +10,12 @@ class NoteItem extends HTMLElement {
 
   constructor() {
     super();
-    this._shadowRoot = this.attachShadow({ mode: 'open' });
-    this._style = document.createElement('style');
+    this._shadowRoot = this.attachShadow({ mode: "open" });
+    this._style = document.createElement("style");
   }
 
   _emptyContent() {
-    this._shadowRoot.innerHTML = '';
+    this._shadowRoot.innerHTML = "";
   }
 
   set note(value) {
@@ -46,8 +46,6 @@ class NoteItem extends HTMLElement {
         padding: 20px;
         border: none;
         border-radius: 12px;
-        // background: linear-gradient(145deg, #6a82fb, #fc5c7d);
-        background: linear-gradient(145deg, #3674B5, #7CA5D2FF);
         box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
         color: white;
         transition: all 0.3s ease;
@@ -55,6 +53,14 @@ class NoteItem extends HTMLElement {
         display: flex;
         flex-direction: column;
         justify-content: space-between; /* Ensures proper spacing for the card content */
+      }
+
+      .card.archive{
+        background: linear-gradient(145deg, #597DA3FF, #97BDE7FF);
+      }
+
+      .card.unarchive{
+        background: linear-gradient(145deg, #377742FF, #97BDE7FF);
       }
 
       .note-info {
@@ -103,12 +109,17 @@ class NoteItem extends HTMLElement {
         transition: background-color 0.3s, transform 0.3s;
       }
 
-      .edit-btn {
-        background-color: #3498db;
+      .archive-btn {
+        background-color: #797A79FF;
+        color: white;
+      }
+        
+      .unarchive-btn {
+        background-color: #2D8F48FF;
         color: white;
       }
 
-      .archive-btn {
+      .delete-btn {
         background-color: #e74c3c;
         color: white;
       }
@@ -117,42 +128,68 @@ class NoteItem extends HTMLElement {
         opacity: 0.9;
         transform: scale(1.05);
       }
-
-      .edit-btn:hover {
-        background-color: #2980b9;
-      }
-
+ 
       .archive-btn:hover {
-        background-color: #c0392b;
+        background-color: #6F7470FF;
       }
+        
+      .unarchive-btn:hover {
+        background-color: #1E6632FF;
+      }
+
+      .delete-btn:hover {
+        background-color: #AA392CFF;
+      }
+
     `;
   }
 
   _formatDate(dateString) {
     const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, '0');
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
-                        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const day = date.getDate().toString().padStart(2, "0");
+    const monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
     const month = monthNames[date.getMonth()];
     const year = date.getFullYear();
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    const seconds = date.getSeconds().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    const seconds = date.getSeconds().toString().padStart(2, "0");
 
     return `${day} ${month} ${year}, ${hours}:${minutes}:${seconds}`;
   }
 
-  _handleEdit() {
-    const event = new CustomEvent('edit-note', {
-      detail: this._note,
+  _handleArchive() {
+    const event = new CustomEvent("archive-note", {
+      detail: this._note.id,
       bubbles: true,
       composed: true,
     });
     this.dispatchEvent(event);
   }
 
-  _handleArchive() {
-    const event = new CustomEvent('archive-note', {
+  _handleUnarchive() {
+    const event = new CustomEvent("unarchive-note", {
+      detail: this._note.id,
+      bubbles: true,
+      composed: true,
+    });
+    this.dispatchEvent(event);
+  }
+
+  _handleDelete() {
+    const event = new CustomEvent("delete-note", {
       detail: this._note.id,
       bubbles: true,
       composed: true,
@@ -163,16 +200,22 @@ class NoteItem extends HTMLElement {
   render() {
     this._emptyContent();
     this._updateStyle();
-    
+
     this._shadowRoot.appendChild(this._style);
 
     // Create main card element
-    const card = document.createElement('div');
-    card.classList.add('card');
+    const card = document.createElement("div");
+    card.classList.add("card");
+
+    if (this._note.archived == true) {
+      card.classList.add("archive");
+    } else {
+      card.classList.add("unarchive");
+    }
 
     // Create note info section
-    const noteInfo = document.createElement('div');
-    noteInfo.classList.add('note-info');
+    const noteInfo = document.createElement("div");
+    noteInfo.classList.add("note-info");
     noteInfo.innerHTML = `
       <div class="note-info__title">
         <h2>${this._note.title}</h2>
@@ -183,27 +226,36 @@ class NoteItem extends HTMLElement {
     `;
 
     // Create date element
-    const dateElement = document.createElement('div');
-    dateElement.classList.add('fan-art-note');
+    const dateElement = document.createElement("div");
+    dateElement.classList.add("fan-art-note");
     dateElement.innerHTML = `<i>${this._formatDate(this._note.createdAt)}</i>`;
 
-    // Create action buttons (edit & archive)
-    const actions = document.createElement('div');
-    actions.classList.add('actions');
+    // Create action buttons (archive & delete)
+    const actions = document.createElement("div");
+    actions.classList.add("actions");
 
-    const editButton = document.createElement('button');
-    editButton.classList.add('edit-btn');
-    editButton.textContent = 'Edit';
-    editButton.addEventListener('click', () => this._handleEdit());
+    const archiveButton = document.createElement("button");
+    archiveButton.classList.add("archive-btn");
+    archiveButton.textContent = "Archive";
+    archiveButton.addEventListener("click", () => this._handleArchive());
 
-    const archiveButton = document.createElement('button');
-    archiveButton.classList.add('archive-btn');
-    archiveButton.textContent = 'Archives';
-    archiveButton.addEventListener('click', () => this._handleArchive());
+    const unarchiveButton = document.createElement("button");
+    unarchiveButton.classList.add("unarchive-btn");
+    unarchiveButton.textContent = "Unarchive";
+    unarchiveButton.addEventListener("click", () => this._handleUnarchive());
+
+    const deleteButton = document.createElement("button");
+    deleteButton.classList.add("delete-btn");
+    deleteButton.textContent = "Delete";
+    deleteButton.addEventListener("click", () => this._handleDelete());
 
     // Append buttons to actions
-    actions.appendChild(editButton);
-    actions.appendChild(archiveButton);
+    if (this._note.archived == true) {
+      actions.appendChild(unarchiveButton);
+    } else {
+      actions.appendChild(archiveButton);
+    }
+    actions.appendChild(deleteButton);
 
     // Append elements to card
     card.appendChild(dateElement);
@@ -215,4 +267,4 @@ class NoteItem extends HTMLElement {
   }
 }
 
-customElements.define('note-item', NoteItem);
+customElements.define("note-item", NoteItem);

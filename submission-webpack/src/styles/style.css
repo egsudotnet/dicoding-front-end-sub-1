@@ -5,7 +5,7 @@
   box-sizing: border-box;
 }
 
-body { 
+body {
   background: linear-gradient(145deg, #c0deff, #d4e7fb);
   font-family: sans-serif;
 }
@@ -33,6 +33,7 @@ section > .title-section {
   /* margin-block-end: 2rem; */
   font-size: 1.2em;
 }
+
 /* GLOBAL */
 
 /* Start of Header */
@@ -51,6 +52,7 @@ header {
 
   font-size: 1.7em;
 }
+
 /* End of Header */
 
 /* Start of Main */
@@ -151,6 +153,7 @@ main {
 .search-form button:active {
   background-color: #6c9aee;
 }
+
 /* Search bar */
 
 .note-list-container {
@@ -188,7 +191,8 @@ main {
 
   text-overflow: ellipsis;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 5; /* number of lines to show */
+  -webkit-line-clamp: 5;
+  /* number of lines to show */
 }
 
 .note-list-container .placeholder {
@@ -198,15 +202,16 @@ main {
   font-weight: lighter;
   color: rgba(0, 0, 0, 0.5);
 }
+
 /* End of Main */
 
 /* Start of Footer */
 footer {
   /* background-color: cornflowerblue; */
-  
-  background:  #3674B5;
+
+  background: #3674b5;
   color: beige;
-  margin-top: 100px
+  margin-top: 100px;
 }
 
 footer .container {
@@ -218,4 +223,32 @@ footer .container {
 
   text-align: center;
 }
+
 /* End of Footer */
+
+/* Animasi pesan sukses */
+.alert {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  color: white;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 16px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+}
+
+.alert.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.success-alert {
+  background-color: #2da44e;
+}
+
+.error-alert {
+  background-color: #cf222e;
+}

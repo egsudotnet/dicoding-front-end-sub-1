@@ -1,7 +1,7 @@
 class InputBar extends HTMLElement {
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
+    this.attachShadow({ mode: "open" });
     this.render();
   }
 
@@ -14,56 +14,56 @@ class InputBar extends HTMLElement {
   }
 
   addEventListeners() {
-    this.form.addEventListener('submit', this.onFormSubmit);
-    this.titleInput.addEventListener('input', this.validateTitle);
-    this.bodyInput.addEventListener('input', this.validateBody);
+    this.form.addEventListener("submit", this.onFormSubmit);
+    this.titleInput.addEventListener("input", this.validateTitle);
+    this.bodyInput.addEventListener("input", this.validateBody);
   }
 
   removeEventListeners() {
-    this.form.removeEventListener('submit', this.onFormSubmit);
-    this.titleInput.removeEventListener('input', this.validateTitle);
-    this.bodyInput.removeEventListener('input', this.validateBody);
+    this.form.removeEventListener("submit", this.onFormSubmit);
+    this.titleInput.removeEventListener("input", this.validateTitle);
+    this.bodyInput.removeEventListener("input", this.validateBody);
   }
 
   validateTitle = () => {
     const titleValue = this.titleInput.value.trim();
-    let errorMessage = '';
+    let errorMessage = "";
 
     if (!titleValue) {
-      errorMessage = 'Title cannot be empty!';
+      errorMessage = "Title cannot be empty!";
     } else if (/\d/.test(titleValue)) {
-      errorMessage = 'Titles cannot contain numbers!';
+      errorMessage = "Titles cannot contain numbers!";
     } else if (titleValue.length > 50) {
-      errorMessage = 'Title maximum 50 characters!';
+      errorMessage = "Title maximum 50 characters!";
     }
 
     this.titleError.textContent = errorMessage;
     this.updateValidationUI(this.titleInput, !errorMessage);
     return !errorMessage;
-  }
+  };
 
   validateBody = () => {
     const bodyValue = this.bodyInput.value.trim();
-    let errorMessage = '';
+    let errorMessage = "";
 
     if (!bodyValue) {
-      errorMessage = 'Description cannot be empty!';
+      errorMessage = "Description cannot be empty!";
     } else if (bodyValue.length > 500) {
-      errorMessage = 'Maximum description 500 characters!';
+      errorMessage = "Maximum description 500 characters!";
     }
 
     this.bodyError.textContent = errorMessage;
     this.updateValidationUI(this.bodyInput, !errorMessage);
     return !errorMessage;
-  }
+  };
 
   updateValidationUI(input, isValid) {
     if (isValid) {
-      input.classList.remove('invalid');
-      input.classList.add('valid');
+      input.classList.remove("invalid");
+      input.classList.add("valid");
     } else {
-      input.classList.remove('valid');
-      input.classList.add('invalid');
+      input.classList.remove("valid");
+      input.classList.add("invalid");
     }
   }
 
@@ -78,38 +78,40 @@ class InputBar extends HTMLElement {
         // // // createdAt: new Date().toISOString(),
       };
 
-      this.dispatchEvent(new CustomEvent('add-note', {
-        detail: newNote,
-        bubbles: true,
-        composed: true,
-      }));
+      this.dispatchEvent(
+        new CustomEvent("add-note", {
+          detail: newNote,
+          bubbles: true,
+          composed: true,
+        }),
+      );
 
       this.form.reset();
     }
-  }
+  };
 
   get form() {
-    return this.shadowRoot.querySelector('#inputForm');
+    return this.shadowRoot.querySelector("#inputForm");
   }
 
   get titleInput() {
-    return this.shadowRoot.querySelector('#title');
+    return this.shadowRoot.querySelector("#title");
   }
 
   get bodyInput() {
-    return this.shadowRoot.querySelector('#body');
+    return this.shadowRoot.querySelector("#body");
   }
 
   get titleError() {
-    return this.shadowRoot.querySelector('#title-error');
+    return this.shadowRoot.querySelector("#title-error");
   }
 
   get bodyError() {
-    return this.shadowRoot.querySelector('#body-error');
+    return this.shadowRoot.querySelector("#body-error");
   }
 
   render() {
-    const style = document.createElement('style');
+    const style = document.createElement("style");
     style.textContent = `
       :host {
         display: block;
@@ -174,17 +176,11 @@ class InputBar extends HTMLElement {
         top: -10px;
         left: 10px;
         font-size: 12px;
-        background-color: #fff;
+        background-color: #f6f8fa;
         padding: 0 6px;
         color: #0969da;
       }
 
-      .error-message {
-        color: #cf222e;
-        font-size: 14px;
-        margin-top: 4px;
-        transition: all 0.3s ease;
-      }
 
       /* Animasi tombol tetap ada */
       .input-form button {
@@ -205,36 +201,20 @@ class InputBar extends HTMLElement {
         transform: translateY(-2px);
       }
 
-      /* Animasi pesan sukses */
-      .success-message {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background-color: #2da44e;
-        color: white;
-        padding: 12px;
-        border-radius: 6px;
-        font-size: 16px;
-        opacity: 0;
-        transform: translateY(20px);
-        transition: all 0.3s ease;
-      }
-
-      .success-message.show {
-        opacity: 1;
-        transform: translateY(0);
-      }
-
       /* Warna validasi input */
       .form-group input.valid,
       .form-group textarea.valid {
-        border-color: #2da44e;
+        border-color: #0969da;
       }
 
       .form-group input.invalid,
       .form-group textarea.invalid {
         border-color: #cf222e;
       }
+        
+    .error-message {
+      color: #cf222e;
+    }
     `;
 
     this.shadowRoot.innerHTML = `
@@ -261,4 +241,4 @@ class InputBar extends HTMLElement {
   }
 }
 
-customElements.define('input-bar', InputBar);
+customElements.define("input-bar", InputBar);

@@ -5,8 +5,8 @@ class SearchLoading extends HTMLElement {
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({ mode: 'open' });
-    this._style = document.createElement('style');
+    this._shadowRoot = this.attachShadow({ mode: "open" });
+    this._style = document.createElement("style");
   }
 
   _updateStyle() {
@@ -18,11 +18,24 @@ class SearchLoading extends HTMLElement {
         font-weight: lighter;
         color: rgba(0, 0, 0, 0.5);
       }
+
+      .spinner-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100px; /* Sesuaikan ukuran */
+      }
+
+      .spinner {
+        margin-top: 300px;
+        width: 250px;
+        height: 250px;
+      }
     `;
   }
 
   _emptyContent() {
-    this._shadowRoot.innerHTML = '';
+    this._shadowRoot.innerHTML = "";
   }
 
   connectedCallback() {
@@ -34,10 +47,12 @@ class SearchLoading extends HTMLElement {
     this._updateStyle();
 
     this._shadowRoot.appendChild(this._style);
-    this._shadowRoot.innerHTML += `      
-      Loading...
+    this._shadowRoot.innerHTML += `           
+      <div class="spinner-container">
+        <img src="spinner.gif" alt="Loading..." class="spinner">
+      </div>
     `;
   }
 }
 
-customElements.define('search-loading', SearchLoading);
+customElements.define("search-loading", SearchLoading);

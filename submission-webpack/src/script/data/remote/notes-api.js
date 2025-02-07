@@ -1,32 +1,32 @@
-const BASE_URL = 'https://notes-api.dicoding.dev/v2';
+const BASE_URL = "https://notes-api.dicoding.dev/v2";
 
 class NotesApi {
   // Create a new note
   static createNote(newNotes) {
     return fetch(`${BASE_URL}/notes`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(newNotes),
     })
       .then((response) => {
-        if (response.status >= "success") {
-          
-          this.showSuccessMessage("Note successfully added!");
+        if (response.status >= 200 && response.status < 300) {
           return response.json();
         } else {
           return Promise.reject(new Error(`Failed to create note`));
         }
       })
-      .then((responseJson) => responseJson);
+      .then((responseJson) => {
+        responseJson;
+      });
   }
 
   // Get all non-archived notes
   static getNotes() {
     return fetch(`${BASE_URL}/notes`)
       .then((response) => {
-        if (response.status >= "success") {
+        if (response.status >= 200 && response.status < 300) {
           return response.json();
         } else {
           return Promise.reject(new Error(`Failed to retrieve notes`));
@@ -35,11 +35,33 @@ class NotesApi {
       .then((responseJson) => responseJson.data);
   }
 
+  static searchNote(notes, query) {
+    return notes
+      .filter((note) => {
+        const loweredCaseQuery = query.toLowerCase();
+        const jammedQuery = loweredCaseQuery.replace(/\s/g, "");
+
+        /// title
+        const loweredCaseNoteTitle = (note.title || "-").toLowerCase();
+        const jammedNoteTitle = loweredCaseNoteTitle.replace(/\s/g, "");
+
+        /// body
+        const loweredCaseNoteBody = (note.body || "-").toLowerCase();
+        const jammedNoteBody = loweredCaseNoteBody.replace(/\s/g, "");
+
+        return (
+          jammedNoteTitle.includes(jammedQuery) ||
+          jammedNoteBody.includes(jammedQuery)
+        );
+      })
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }
+
   // Get all archived notes
   static getArchivedNotes() {
     return fetch(`${BASE_URL}/notes/archived`)
       .then((response) => {
-        if (response.status >= "success") {
+        if (response.status >= 200 && response.status < 300) {
           return response.json();
         } else {
           return Promise.reject(new Error(`Failed to retrieve archived notes`));
@@ -52,7 +74,7 @@ class NotesApi {
   static getNoteById(noteId) {
     return fetch(`${BASE_URL}/notes/${noteId}`)
       .then((response) => {
-        if (response.status >= "success") {
+        if (response.status >= 200 && response.status < 300) {
           return response.json();
         } else {
           return Promise.reject(new Error(`Failed to retrieve note`));
@@ -64,10 +86,10 @@ class NotesApi {
   // Archive a note
   static archiveNote(noteId) {
     return fetch(`${BASE_URL}/notes/${noteId}/archive`, {
-      method: 'POST',
+      method: "POST",
     })
       .then((response) => {
-        if (response.status >= "success") {
+        if (response.status >= 200 && response.status < 300) {
           return response.json();
         } else {
           return Promise.reject(new Error(`Failed to archive note`));
@@ -79,10 +101,10 @@ class NotesApi {
   // Unarchive a note
   static unarchiveNote(noteId) {
     return fetch(`${BASE_URL}/notes/${noteId}/unarchive`, {
-      method: 'POST',
+      method: "POST",
     })
       .then((response) => {
-        if (response.status >= "success") {
+        if (response.status >= 200 && response.status < 300) {
           return response.json();
         } else {
           return Promise.reject(new Error(`Failed to unarchive note`));
@@ -94,10 +116,10 @@ class NotesApi {
   // Delete a note
   static deleteNote(noteId) {
     return fetch(`${BASE_URL}/notes/${noteId}`, {
-      method: 'DELETE',
+      method: "DELETE",
     })
       .then((response) => {
-        if (response.status >= "success") {
+        if (response.status >= 200 && response.status < 300) {
           return response.json();
         } else {
           return Promise.reject(new Error(`Failed to delete note`));
@@ -105,25 +127,6 @@ class NotesApi {
       })
       .then((responseJson) => responseJson);
   }
-  
-  showSuccessMessage(message = "", type = "success") {
-    const successMessage = document.createElement('div');
-    successMessage.textContent = message;
-    successMessage.className = type + '-message';
-    this.shadowRoot.appendChild(successMessage);
-
-    setTimeout(() => {
-      successMessage.classList.add('show');
-    }, 10);
-
-    setTimeout(() => {
-      successMessage.classList.remove('show');
-      setTimeout(() => {
-        this.shadowRoot.removeChild(successMessage);
-      }, 300);
-    }, 3000);
-  }
-
 }
 
 export default NotesApi;

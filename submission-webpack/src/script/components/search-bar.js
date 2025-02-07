@@ -1,12 +1,23 @@
 class SearchBar extends HTMLElement {
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
+    this.attachShadow({ mode: "open" });
     this.render();
   }
 
   connectedCallback() {
     this.addEventListeners();
+
+    // Ambil nilai filter dari localStorage saat komponen pertama kali dimuat
+    const savedFilter = localStorage.getItem("filter");
+    if (savedFilter) {
+      const radioToCheck = this.shadowRoot.querySelector(
+        `input[value="${savedFilter}"]`,
+      );
+      if (radioToCheck) {
+        radioToCheck.checked = true;
+      }
+    }
   }
 
   disconnectedCallback() {
@@ -14,28 +25,60 @@ class SearchBar extends HTMLElement {
   }
 
   addEventListeners() {
-    this.input.addEventListener('input', this.onSearchInput);
+    this.input.addEventListener("input", this.onSearchInput);
+    this.radios.forEach((radio) =>
+      radio.addEventListener("change", this.onRadioChange),
+    );
   }
 
   removeEventListeners() {
-    this.input.removeEventListener('input', this.onSearchInput);
+    this.input.removeEventListener("input", this.onSearchInput);
+    this.radios.forEach((radio) =>
+      radio.removeEventListener("change", this.onRadioChange),
+    );
   }
 
   onSearchInput = () => {
+    this.dispatchSearchEvent();
+  };
+
+  onRadioChange = () => {
+    const selectedFilter = this.selectedRadio
+      ? this.selectedRadio.value
+      : "archive";
+
+    // Simpan ke localStorage
+    localStorage.setItem("filter", selectedFilter);
+    this.dispatchSearchEvent();
+  };
+
+  dispatchSearchEvent() {
     const query = this.input.value.trim();
-    this.dispatchEvent(new CustomEvent('search', {
-      detail: { query },
-      bubbles: true,
-      composed: true,
-    }));
+    const filter = this.selectedRadio ? this.selectedRadio.value : "archive";
+
+    this.dispatchEvent(
+      new CustomEvent("search", {
+        detail: { query, filter },
+        bubbles: true,
+        composed: true,
+      }),
+    );
   }
 
   get input() {
-    return this.shadowRoot.querySelector('#searchInput');
+    return this.shadowRoot.querySelector("#searchInput");
+  }
+
+  get radios() {
+    return this.shadowRoot.querySelectorAll("input[name='filter']");
+  }
+
+  get selectedRadio() {
+    return this.shadowRoot.querySelector("input[name='filter']:checked");
   }
 
   render() {
-    const style = document.createElement('style');
+    const style = document.createElement("style");
     style.textContent = `
       :host {
         display: block;
@@ -46,12 +89,16 @@ class SearchBar extends HTMLElement {
       .floating-form {
         background: #f6f8fa;
         border: 1px solid #d0d7de;
-        padding: 1px 28px 1px 1px;
+        padding: 10px 35px 10px 10px;
         border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
       }
 
       .form-group {
         position: relative;
+        flex: 1;
       }
 
       .form-group input {
@@ -80,7 +127,7 @@ class SearchBar extends HTMLElement {
         top: -8px;
         left: 10px;
         font-size: 12px;
-        background-color: #fff;
+        background-color: #f6f8fa;
         padding: 0 6px;
         color: #0969da;
       }
@@ -90,6 +137,24 @@ class SearchBar extends HTMLElement {
         border-color: #0969da;
         box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.3);
         outline: none;
+      }
+
+      /* Radio Button */
+      .radio-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .radio-group label {
+        font-size: 14px;
+        color: #333;
+        cursor: pointer;
+      }
+
+      input[type="radio"] {
+        accent-color: #0969da;
+        cursor: pointer;
       }
 
       /* RESPONSIVE LAYOUT */
@@ -110,7 +175,7 @@ class SearchBar extends HTMLElement {
 
       @media (min-width: 769px) {
         .floating-form {
-          width: 350px;
+          width: 400px;
         }
       }
     `;
@@ -118,6 +183,12 @@ class SearchBar extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <div class="container">
         <div class="floating-form">
+          <div class="radio-group">
+            <input type="radio" id="unarchive" name="filter" value="unarchive" checked/>
+            <label for="unarchive">Active</label>
+            <input type="radio" id="archive" name="filter" value="archive" />
+            <label for="archive">Archive</label>
+          </div>
           <div class="form-group">
             <input id="searchInput" name="search" type="text" required placeholder=" " />
             <label for="searchInput">Search...</label>
@@ -130,4 +201,4 @@ class SearchBar extends HTMLElement {
   }
 }
 
-customElements.define('search-bar', SearchBar);
+customElements.define("search-bar", SearchBar);

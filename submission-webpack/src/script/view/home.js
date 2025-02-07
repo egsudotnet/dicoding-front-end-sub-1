@@ -1,45 +1,71 @@
-import Utils from '../utils.js';
+import Utils from "../utils.js";
 // import Notes from '../data/local/notes.js';
-import Notes from '../data/remote/notes-api.js';
+import Notes from "../data/remote/notes-api.js";
 
 const home = () => {
-  const searchFormElement = document.querySelector('search-bar');
-  const noteListContainerElement = document.querySelector('#noteListContainer');
-  const noteQueryWaitingElement = document.querySelector('query-waiting');
-  const noteLoadingElement = document.querySelector('search-loading');
-  const noteListElement = noteListContainerElement.querySelector('note-list');
-  const createFormElement = document.querySelector('input-bar'); // Form untuk membuat catatan 
+  const searchFormElement = document.querySelector("search-bar");
+  const noteListContainerElement = document.querySelector("#noteListContainer");
+  const noteQueryWaitingElement = document.querySelector("query-waiting");
+  const noteLoadingElement = document.querySelector("search-loading");
+  const noteListElement = noteListContainerElement.querySelector("note-list");
+  const createFormElement = document.querySelector("input-bar"); // Form untuk membuat catatan
 
   /**
    * Menampilkan semua catatan yang ada
    */
   const showAllNotes = () => {
     showLoading();
-    // // // const result = Notes.getAll();
-    // // // displayResult(result);
-    // // // showNoteList();
 
-    
-    Notes.getNotes()
-      .then((result) => {
-        displayResult(result);
-        showNoteList();
-      })
-      .catch((error) => {
-        clubSearchErrorElement.textContent = error.message;
-        showSearchError();
-      });
-
+    setTimeout(() => {
+      Notes.getNotes()
+        .then((result) => {
+          displayResult(result);
+          showNoteList();
+        })
+        .catch((error) => {
+          Utils.showMessage(error, "error");
+        });
+    }, 1000);
   };
 
   /**
    * Menampilkan hasil pencarian catatan berdasarkan query
    */
-  const showNote = (query) => {
+  const showNote = (query = "", filter = "") => {
     showLoading();
-    const result = Notes.searchNote(query);
-    displayResult(result);
-    showNoteList();
+
+    const lastFilter = localStorage.getItem("filter") || "archive";
+    if (!filter) filter = lastFilter;
+    const radio = searchFormElement.shadowRoot?.querySelector(
+      `input[value="${filter}"]`,
+    );
+    if (radio) {
+      radio.checked = true;
+    }
+
+    setTimeout(() => {
+      if (filter == "unarchive") {
+        Notes.getNotes()
+          .then((result) => {
+            const notes = Notes.searchNote(result, query);
+            displayResult(notes);
+            showNoteList();
+          })
+          .catch((error) => {
+            Utils.showMessage(error, "error");
+          });
+      } else {
+        Notes.getArchivedNotes()
+          .then((result) => {
+            const notes = Notes.searchNote(result, query);
+            displayResult(notes);
+            showNoteList();
+          })
+          .catch((error) => {
+            Utils.showMessage(error, "error");
+          });
+      }
+    }, 1000);
   };
 
   /**
@@ -47,12 +73,16 @@ const home = () => {
    */
   const displayResult = (notes) => {
     const noteItemElements = notes.map((note) => {
-      const noteItemElement = document.createElement('note-item');
+      const noteItemElement = document.createElement("note-item");
       noteItemElement.note = note;
 
-      // Tambahkan event listener untuk tombol edit & archive
-      noteItemElement.addEventListener('edit', () => onUpdateNoteHandler(note.id));
-      noteItemElement.addEventListener('archive', () => onArchiveNoteHandler(note.id));
+      // Tambahkan event listener untuk tombol archive & delete
+      noteItemElement.addEventListener("archive", () =>
+        onArchiveNoteHandler(note.id),
+      );
+      noteItemElement.addEventListener("delete", () =>
+        onDeleteNoteHandler(note.id),
+      );
 
       return noteItemElement;
     });
@@ -61,75 +91,13 @@ const home = () => {
     noteListElement.append(...noteItemElements);
   };
 
-  // Tangani event saat catatan baru dibuat
-  createFormElement.addEventListener('add-note', (event) => {
-    const newNote = event.detail;
-    Notes.createNote(newNote);
-    showAllNotes();
-  });
-
   /**
    * Event listener saat pencarian dilakukan
    */
   const onSearchHandler = (event) => {
     event.preventDefault();
-    const { query } = event.detail;
-    showNote(query);
-  };
-
-  /**
-   * Event listener untuk menambahkan catatan baru
-   */
-  const onCreateNoteHandler = (event) => {
-    event.preventDefault();
-
-    const titleInput = document.querySelector('#noteTitle');
-    const bodyInput = document.querySelector('#noteBody');
-
-    if (titleInput.value.trim() === '' || bodyInput.value.trim() === '') {
-      alert('Judul dan isi catatan tidak boleh kosong!');
-      return;
-    }
-
-    Notes.createNote({
-      "title": titleInput.value,
-      "body": bodyInput.value,
-    });
-
-    titleInput.value = '';
-    bodyInput.value = '';
-
-    showAllNotes();
-  };
-
-  /**
-   * Event listener untuk mengupdate catatan
-   */
-  const onUpdateNoteHandler = (id) => {
-    const note = Notes.selectNoteById(id);
-    if (!note) {
-      alert('Catatan tidak ditemukan');
-      return;
-    }
-
-    const newTitle = prompt('Edit Title:', note.title);
-    const newBody = prompt('Edit Contents:', note.body);
-
-    if (newTitle && newBody) {
-      Notes.updateNote(id, { title: newTitle, body: newBody });
-      showAllNotes();
-    }
-  };
-
-  /**
-   * Event listener untuk mengarsipkan catatan
-   */
-  const onArchiveNoteHandler = (id) => {
-    const confirmation = confirm('Apakah Anda yakin ingin mengarsipkan catatan ini?');
-    if (confirmation) {
-      Notes.archiveNote(id);
-      showAllNotes();
-    }
+    const { query, filter } = event.detail;
+    showNote(query, filter);
   };
 
   /**
@@ -163,33 +131,84 @@ const home = () => {
   };
 
   // Event listener untuk pencarian
-  searchFormElement.addEventListener('search', onSearchHandler);
+  searchFormElement.addEventListener("search", onSearchHandler);
 
-  // Event listener untuk form penambahan catatan
-  createFormElement.addEventListener('submit', onCreateNoteHandler);
+  // Tangani event saat catatan baru dibuat
+  createFormElement.addEventListener("add-note", (event) => {
+    const newNote = event.detail;
 
-  ///
-  noteListElement.addEventListener('edit-note', (event) => {
-    const note = event.detail;
-    const newTitle = prompt('Edit Title:', note.title);
-    const newBody = prompt('Edit Contents:', note.body);
-  
-    if (newTitle && newBody) {
-      Notes.updateNote(note.id, { title: newTitle, body: newBody });
-      showAllNotes();
-    }
+    Notes.createNote(newNote)
+      .then((result) => {
+        Utils.showMessage("Note successfully added!");
+        showAllNotes();
+      })
+      .catch((error) => {
+        Utils.showMessage(error, "error");
+      });
   });
-  
-  ///
-  noteListElement.addEventListener('archive-note', (event) => {
+
+  noteListElement.addEventListener("archive-note", (event) => {
     const noteId = event.detail;
-    const confirmation = confirm('Apakah Anda yakin ingin mengarsipkan catatan ini?');
+
+    const confirmation = confirm("Are you sure you want to archive this note?");
     if (confirmation) {
-      Notes.archiveNote(noteId);
-      showAllNotes();
+      Notes.archiveNote(noteId)
+        .then((response) => {
+          if (response.status === "success") {
+            Utils.showMessage("Note successfully archived!");
+            showNote();
+          } else {
+            Utils.showMessage(response.message, "error");
+          }
+        })
+        .catch((error) => {
+          Utils.showMessage(error, "error");
+        });
     }
   });
-  
+
+  noteListElement.addEventListener("unarchive-note", (event) => {
+    const noteId = event.detail;
+    const confirmation = confirm(
+      "Are you sure you want to unarchive this note?",
+    );
+    if (confirmation) {
+      Notes.unarchiveNote(noteId)
+        .then((response) => {
+          if (response.status === "success") {
+            Utils.showMessage("Note successfully unarchived!");
+            showNote();
+          } else {
+            Utils.showMessage(response.message, "error");
+          }
+        })
+        .catch((error) => {
+          Utils.showMessage(error, "error");
+        });
+    }
+  });
+
+  noteListElement.addEventListener("delete-note", (event) => {
+    const noteId = event.detail;
+    const confirmation = confirm(
+      "Are you sure you want to delete this record?",
+    );
+    if (confirmation) {
+      Notes.deleteNote(noteId)
+        .then((response) => {
+          if (response.status === "success") {
+            Utils.showMessage("Note successfully deleted!");
+            showNote();
+          } else {
+            Utils.showMessage(response.message, "error");
+          }
+        })
+        .catch((error) => {
+          Utils.showMessage(error, "error");
+        });
+    }
+  });
+
   // Tampilkan semua catatan saat halaman dimuat
   showAllNotes();
 };

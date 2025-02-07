@@ -2,17 +2,17 @@ class SectionWithTitle extends HTMLElement {
   _shadowRoot = null;
   _style = null;
 
-  _title = 'NEED SECTION TITLE';
+  _title = "NEED SECTION TITLE";
 
   static get observedAttributes() {
-    return ['title'];
+    return ["title"];
   }
 
   constructor() {
     super();
 
-    this._shadowRoot = this.attachShadow({ mode: 'open' });
-    this._style = document.createElement('style');
+    this._shadowRoot = this.attachShadow({ mode: "open" });
+    this._style = document.createElement("style");
 
     this.render();
   }
@@ -40,7 +40,7 @@ class SectionWithTitle extends HTMLElement {
   }
 
   _emptyContent() {
-    this._shadowRoot.innerHTML = '';
+    this._shadowRoot.innerHTML = "";
   }
 
   render() {
@@ -63,7 +63,7 @@ class SectionWithTitle extends HTMLElement {
 
   attributeChangedCallback(name, oldValue, newValue) {
     switch (name) {
-      case 'title':
+      case "title":
         this.title = newValue;
         break;
     }
@@ -72,4 +72,4 @@ class SectionWithTitle extends HTMLElement {
   }
 }
 
-customElements.define('section-with-title', SectionWithTitle);
+customElements.define("section-with-title", SectionWithTitle);
